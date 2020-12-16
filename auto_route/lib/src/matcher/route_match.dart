@@ -6,8 +6,8 @@ import '../utils.dart';
 @immutable
 class RouteMatch {
   final RouteConfig config;
-  final Map<String, dynamic> pathParams;
-  final Map<String, dynamic> queryParams;
+  final Parameters pathParams;
+  final Parameters queryParams;
   final List<RouteMatch> children;
   final String fragment;
   final List<String> segments;
@@ -46,4 +46,6 @@ class RouteMatch {
   toString() {
     return 'RouteMatch{key: ${config.path}, segments: $segments, params: $pathParams children: $children}';
   }
+
+  RouteArgs buildArgs() => config.argsBuilder(this);
 }

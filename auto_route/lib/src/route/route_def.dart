@@ -1,7 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 
 import '../auto_route_guard.dart';
 import '../matcher/route_matcher.dart';
+
+typedef ArgsBuilder = RouteArgs Function(RouteMatch match);
 
 @immutable
 class RouteConfig {
@@ -12,7 +15,7 @@ class RouteConfig {
   final RoutesCollection _children;
   final String redirectTo;
   final List<AutoRouteGuard> guards;
-  final String group;
+  final ArgsBuilder argsBuilder;
 
   RouteConfig(
     this.key, {
@@ -21,7 +24,7 @@ class RouteConfig {
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
-    this.group,
+    this.argsBuilder,
     List<RouteConfig> children,
   })  : assert(page == null || redirectTo == null),
         assert(fullMatch != null),

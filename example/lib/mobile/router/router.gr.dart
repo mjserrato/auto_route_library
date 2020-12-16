@@ -6,11 +6,12 @@
 
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/material.dart' as _i2;
-import 'auth_guard.dart' as _i3;
-import '../screens/home_page.dart' as _i4;
-import '../screens/book_list_page.dart' as _i5;
+
 import '../screens/book_details_page.dart' as _i6;
+import '../screens/book_list_page.dart' as _i5;
+import '../screens/home_page.dart' as _i4;
 import '../screens/login_page.dart' as _i7;
+import 'auth_guard.dart' as _i3;
 
 class MyRouterConfig extends _i1.AutoRouterConfig {
   MyRouterConfig({@_i2.required this.authGuard}) : assert(authGuard != null);
@@ -26,29 +27,31 @@ class MyRouterConfig extends _i1.AutoRouterConfig {
       return _i1.MaterialPageX(data: data, child: _i5.BookListPage());
     },
     _i6.BookDetailsPage: (data) {
-      return _i1.MaterialPageX(
-          data: data,
-          child: _i6.BookDetailsPage(bookId: data.pathParams.getInt('id')));
+      return _i1.MaterialPageX(data: data, child: _i6.BookDetailsPage(bookId: data.pathParams.getInt('id')));
     },
     _i7.LoginPage: (data) {
       var args = data.getArgs<LoginPageArgs>(orElse: () => LoginPageArgs());
-      return _i1.MaterialPageX(
-          data: data,
-          child: _i7.LoginPage(key: args.key, onResult: args.onResult));
+      return _i1.MaterialPageX(data: data, child: _i7.LoginPage(key: args.key, onResult: args.onResult));
     }
   };
 
   @override
   List<_i1.RouteConfig> get routes => [
-        _i1.RouteConfig(HomePageRoute.key, path: '/', page: _i4.HomePage),
-        _i1.RouteConfig(BookListPageRoute.key,
-            path: '/book-list-page', page: _i5.BookListPage),
-        _i1.RouteConfig(BookDetailsPageRoute.key,
-            path: '/books/:id', page: _i6.BookDetailsPage, guards: [authGuard]),
-        _i1.RouteConfig(LoginPageRoute.key,
-            path: '/login', page: _i7.LoginPage),
-        _i1.RouteConfig('*#redirect',
-            path: '*', redirectTo: '/', fullMatch: true)
+        _i1.RouteConfig(
+          HomePageRoute.key,
+          path: '/',
+          page: _i4.HomePage,
+        ),
+        _i1.RouteConfig(BookListPageRoute.key, path: '/book-list-page', page: _i5.BookListPage),
+        _i1.RouteConfig(
+          BookDetailsPageRoute.key,
+          path: '/books/:id',
+          page: _i6.BookDetailsPage,
+          guards: [authGuard],
+          argsBuilder: (match) => BookDetailsPageArgs.fromMatch(match),
+        ),
+        _i1.RouteConfig(LoginPageRoute.key, path: '/login', page: _i7.LoginPage),
+        _i1.RouteConfig('*#redirect', path: '*', redirectTo: '/', fullMatch: true)
       ];
 }
 
@@ -65,22 +68,26 @@ class BookListPageRoute extends _i1.PageRouteInfo {
 }
 
 class BookDetailsPageRoute extends _i1.PageRouteInfo {
-  BookDetailsPageRoute({@_i2.required id})
-      : super(key, path: '/books/:id', pathParams: {'id': id});
+  BookDetailsPageRoute({@_i2.required id}) : super(key, path: '/books/:id', pathParams: {'id': id});
 
   static const String key = 'BookDetailsPageRoute';
 }
 
 class LoginPageRoute extends _i1.PageRouteInfo {
   LoginPageRoute({_i2.Key key0, void Function(bool) onResult})
-      : super(key,
-            path: '/login', args: LoginPageArgs(key: key0, onResult: onResult));
+      : super(key, path: '/login', args: LoginPageArgs(key: key0, onResult: onResult));
 
   static const String key = 'LoginPageRoute';
 }
 
 class BookDetailsPageArgs extends _i1.RouteArgs {
-  BookDetailsPageArgs() : super([]);
+  final int id;
+
+  BookDetailsPageArgs({this.id}) : super([id]);
+
+  factory BookDetailsPageArgs.fromMatch(_i1.RouteMatch match) {
+    return BookDetailsPageArgs(id: match.pathParams.getInt('id'));
+  }
 }
 
 class LoginPageArgs extends _i1.RouteArgs {

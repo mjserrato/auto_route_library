@@ -11,9 +11,6 @@ class PageRouteInfo {
   final String _key;
   final String path;
   final String _rawMatch;
-  final Map<String, dynamic> pathParams;
-  final Map<String, dynamic> queryParams;
-  final String fragment;
   final List<PageRouteInfo> children;
   final RouteArgs args;
 
@@ -22,9 +19,6 @@ class PageRouteInfo {
     @required this.path,
     String match,
     this.children,
-    this.queryParams,
-    this.pathParams,
-    this.fragment,
     this.args,
   }) : _rawMatch = match;
 
@@ -34,38 +28,28 @@ class PageRouteInfo {
     assert(match != null);
     var children;
     if (match.hasChildren) {
-      children = match.children
-          .map((m) => PageRouteInfo.fromMatch(m))
-          .toList(growable: false);
+      children = match.children.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
     }
-    return PageRouteInfo(
-      match.config.key,
-      path: match.config.path,
-      match: p.joinAll(match.segments),
-      pathParams: match.pathParams,
-      fragment: match.fragment,
-      queryParams: match.queryParams,
-      children: children,
-    );
+    return PageRouteInfo(match.config.key,
+        path: match.config.path, match: p.joinAll(match.segments), children: children, args: match.buildArgs());
   }
 
-  String get match => _rawMatch ?? _expand(path, pathParams);
+  // String get match => _rawMatch ?? _expand(path, pathParams);
 
-  String get fullPath =>
-      p.joinAll([match, if (hasChildren) children.last.fullPath]);
+  // String get fullPath => p.joinAll([match, if (hasChildren) children.last.fullPath]);
 
   bool get hasChildren => !listNullOrEmpty(children);
 
-  static String _expand(String template, Map<String, dynamic> params) {
-    if (mapNullOrEmpty(params)) {
-      return template;
-    }
-    var paramsRegex = RegExp(":(${params.keys.join('|')})");
-    var path = template.replaceAllMapped(paramsRegex, (match) {
-      return params[match.group(1)]?.toString() ?? '';
-    });
-    return path;
-  }
+  // static String _expand(String template, Map<String, dynamic> params) {
+  //   if (mapNullOrEmpty(params)) {
+  //     return template;
+  //   }
+  //   var paramsRegex = RegExp(":(${params.keys.join('|')})");
+  //   var path = template.replaceAllMapped(paramsRegex, (match) {
+  //     return params[match.group(1)]?.toString() ?? '';
+  //   });
+  //   return path;
+  // }
 
   PageRouteInfo copyWith({
     String key,
@@ -76,23 +60,10 @@ class PageRouteInfo {
     List<PageRouteInfo> children,
     Object args,
   }) {
-    if ((key == null || identical(key, this.path)) &&
-        (path == null || identical(path, this._rawMatch)) &&
-        (pathParams == null || identical(pathParams, this.pathParams)) &&
-        (queryParams == null || identical(queryParams, this.queryParams)) &&
-        (fragment == null || identical(fragment, this.fragment)) &&
-        (children == null || identical(children, this.children)) &&
-        (args == null || identical(args, this.args))) {
-      return this;
-    }
-
     return new PageRouteInfo(
       key ?? this._key,
       path: path ?? this.path,
-      match: match ?? this.match,
-      pathParams: pathParams ?? this.pathParams,
-      queryParams: queryParams ?? this.queryParams,
-      fragment: fragment ?? this.fragment,
+      // match: match ?? this.match,
       children: children ?? this.children,
       args: args ?? this.args,
     );
@@ -100,7 +71,7 @@ class PageRouteInfo {
 
   @override
   String toString() {
-    return 'route{path: $path, pathName: $path, pathParams: $pathParams}';
+    return 'route{path: $path, pathName: $path}';
   }
 
   @override
@@ -112,10 +83,7 @@ class PageRouteInfo {
             _key == o._key &&
             path == o.path &&
             _rawMatch == o._rawMatch &&
-            fragment == o.fragment &&
             args == o.args &&
-            mapEquality.equals(pathParams, o.pathParams) &&
-            mapEquality.equals(queryParams, o.queryParams) &&
             ListEquality().equals(children, o.children);
   }
 
@@ -125,13 +93,5 @@ class PageRouteInfo {
   }
 
   @override
-  int get hashCode =>
-      _key.hashCode ^
-      path.hashCode ^
-      _rawMatch.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      fragment.hashCode ^
-      children.hashCode ^
-      args.hashCode;
+  int get hashCode => _key.hashCode ^ path.hashCode ^ _rawMatch.hashCode ^ children.hashCode ^ args.hashCode;
 }

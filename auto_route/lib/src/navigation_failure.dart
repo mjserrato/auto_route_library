@@ -15,7 +15,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 
   @override
   String toString() {
-    return "Failed to navigate to ${route.fullPath}";
+    return "Failed to navigate to ${route.routeKey}";
   }
 }
 
@@ -27,6 +27,6 @@ class RejectedByGuardFailure extends NavigationFailure {
 
   @override
   String toString() {
-    return '${routes.map((e) => e.match)} rejected by guard ${guard.runtimeType}';
+    return '${routes.map((e) => e.routeKey)} rejected by guard ${guard.runtimeType}';
   }
 }

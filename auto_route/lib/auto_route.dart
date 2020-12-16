@@ -5,6 +5,7 @@ export 'package:meta/meta.dart' show required;
 export 'legacy.dart' hide RouteData, RouteDef;
 export 'src/auto_route_guard.dart';
 export 'src/common/common.dart';
+export 'src/matcher/route_match.dart';
 export 'src/route/page_route_info.dart';
 export 'src/route/route_args.dart';
 export 'src/route/route_data.dart';
